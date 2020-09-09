@@ -14,9 +14,13 @@ const headingStyle = css`
     right: 100%;
     ${tw`text-purple-600 absolute opacity-0 outline-none flex items-center inset-y-0 mr-1`}
   }
+  &:target a,
   & a:focus,
   &:hover a {
     ${tw`opacity-100`}
+  }
+  &:target a {
+    ${tw`text-teal-600`}
   }
   @media (hover: none) {
     a {
