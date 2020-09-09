@@ -27,6 +27,9 @@ const links = [
 
 const linkStyle = tw`inline-flex items-center p-1 hover:bg-gray-050 focus:bg-gray-100 focus:outline-none rounded text-gray-800!`;
 
+const stripTrailingSlash = (path: string) =>
+  path.endsWith("/") ? path.slice(0, -1) : path;
+
 const TopNavigation: React.FC = () => {
   const location = useLocation();
   return (
@@ -46,7 +49,8 @@ const TopNavigation: React.FC = () => {
               <span
                 css={css`
                   ${tw`inline-flex items-center`}
-                  ${location.pathname === link.to
+                  ${stripTrailingSlash(location.pathname) ===
+                  stripTrailingSlash(link.to)
                     ? tw`text-teal-700`
                     : tw`text-gray-700`}
                 `}
