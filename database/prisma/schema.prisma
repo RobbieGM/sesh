@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "generated/client"
+  previewFeatures = ["atomicNumberOperations"]
+}
+
+model Tenant {
+  id           Int           @id @default(autoincrement())
+  email        String
+  passwordHash String
+  usageRecords UsageRecord[]
+  pricingPlan  PricingPlan   @default(FREE)
+}
+
+enum PricingPlan {
+  FREE
+  METERED
+}
+
+model UsageRecord {
+  tenantId        Int
+  monthNumber     Int
+  apiCalls        Int
+  sessionsCreated Int
+  tenant          Tenant @relation(fields: [tenantId], references: [id])
+  @@id([tenantId, monthNumber])
+}

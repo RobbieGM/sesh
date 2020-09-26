@@ -1,0 +1,24 @@
+{
+  "name": "database",
+  "version": "1.0.0",
+  "description": "The shared database module for the Sesh API and the Sesh Dashboard.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobbieGM/sesh.git"
+  },
+  "scripts": {
+    "prisma:generate": "npx prisma generate"
+  },
+  "author": "Robbie Moore",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RobbieGM/sesh/issues"
+  },
+  "homepage": "https://github.com/RobbieGM/sesh#readme",
+  "dependencies": {
+    "@prisma/cli": "^2.7.1",
+    "@prisma/client": "^2.7.1"
+  },
+  "devDependencies": {}
+}
