@@ -44,7 +44,11 @@ export const enum ErrorCode {
 }
 
 export class HttpError extends Error {
-  constructor(public statusCode: ErrorCode, message: string) {
+  constructor(
+    public statusCode: ErrorCode,
+    message: string,
+    public headers: Record<string, string | number | string[]> = {}
+  ) {
     super(message);
   }
 }
@@ -52,14 +56,22 @@ export class HttpError extends Error {
 // 4th parameter (_next) is required for express to differentiate between error handler middleware and
 // normal middleware
 const errorHandlerMiddleware: ErrorRequestHandler = (err, req, res, _next) => {
-  const error =
+  const sentError =
     err instanceof HttpError
       ? err
       : new HttpError(ErrorCode.InternalServerError, "Internal server error");
   if (process.env.NODE_ENV === "development") {
-    console.error("Caught error in request:", error);
+    console.error("Caught error in request:", err);
   }
-  return res.status(error.statusCode).type("text/plain").send(error.message);
+  Object.entries(sentError.headers).forEach(([key, value]) =>
+    res.setHeader(key, value)
+  );
+  if (!res.headersSent) {
+    return res
+      .type("text/plain")
+      .status(sentError.statusCode)
+      .send(sentError.message);
+  }
 };
 
 export default errorHandlerMiddleware;

@@ -46,7 +46,9 @@ const createApiAuthenticationMiddleware = (
     APISessionMetadata
   > | null;
   if (session == null) {
-    throw new HttpError(ErrorCode.Unauthorized, "Invalid API key");
+    throw new HttpError(ErrorCode.Unauthorized, "Invalid API key", {
+      "WWW-Authenticate": 'Bearer realm="Access to the Sesh API"',
+    });
   }
   req.tenantSession = { ...session, key };
   next();
