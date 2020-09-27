@@ -27,7 +27,7 @@ function excludeUndefinedFromObjectValues<T>(object: T) {
 }
 
 function marshalSession({
-  expiresAt: _f,
+  expiresAt: _,
   ...session
 }: Session): MarshalledSession {
   return {
@@ -40,7 +40,7 @@ function marshalSession({
 
 function unmarshalSession(
   marshalledSession: MarshalledSession,
-  expiresAt: Date
+  expiresAt: Date | undefined
 ): Session {
   return {
     ...marshalledSession,
@@ -72,10 +72,18 @@ class RedisSessionStore implements SessionStore {
   async get(sessionKey: SessionKey) {
     const key = serializeKey(sessionKey);
     const [marshalledSession, timeToLiveMilliseconds] = await Promise.all([
-      this.store.hgetall(key),
+      this.store.hgetall(key) as Promise<
+        MarshalledSession | Record<string, unknown>
+      >,
       this.store.pttl(key),
     ]);
-    const expiresAt = new Date(Date.now() + timeToLiveMilliseconds);
+    if (Object.keys(marshalledSession).length === 0) {
+      return null;
+    }
+    const expiresAt =
+      timeToLiveMilliseconds === -1
+        ? undefined
+        : new Date(Date.now() + timeToLiveMilliseconds);
     return unmarshalSession(marshalledSession as MarshalledSession, expiresAt);
   }
 
@@ -134,7 +142,12 @@ class RedisSessionStore implements SessionStore {
   }
 }
 
-function sessionNeedsUpdate(first: Session, second: Session): boolean {
+function sessionNeedsUpdate(
+  first: Session | null,
+  second: Session | null
+): boolean {
+  if (first == null && second == null) return false;
+  if (first == null || second == null) return true;
   const toleranceMilliseconds = 1000;
   const sessionDataIsEqual =
     JSON.stringify(marshalSession(first)) !==
@@ -186,7 +199,11 @@ export class HybridRedisSessionStore implements SessionStore {
       Promise.all([cachedPromise, primaryPromise]).then(
         ([cachedSession, primarySession]) => {
           if (sessionNeedsUpdate(cachedSession, primarySession)) {
-            this.cacheStore.set(key, primarySession);
+            if (primarySession != null) {
+              this.cacheStore.set(key, primarySession);
+            } else {
+              this.cacheStore.deleteSession(key);
+            }
           }
         }
       );
