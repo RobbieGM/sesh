@@ -7,9 +7,10 @@ import createApiAuthenticationMiddleware from "./middleware/auth";
 import { HybridRedisSessionStore } from "./session-store/redis-store";
 import errorHandlerMiddleware from "./middleware/error";
 import createTenantUsageMiddleware from "./middleware/tenant-usage";
-import { config } from "dotenv";
+import dotenv from "dotenv";
+import { resolve } from "path";
 
-config();
+dotenv.config({ path: resolve(__dirname, "../.env") });
 
 const app = express();
 const prisma = new PrismaClient();
