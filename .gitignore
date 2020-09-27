@@ -8,10 +8,11 @@ node_modules
 # testing
 coverage
 
-# production
+# production, generated code
 build
 dist
 generated
+migrations
 
 # misc
 .DS_Store
