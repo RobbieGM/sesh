@@ -17,6 +17,6 @@ export default createHandler(
         throw new HttpError(404, "A session with that token does not exist.");
       } else throw e;
     }
-    return { data: null };
+    return { statusCode: 204, data: null };
   }
 );
