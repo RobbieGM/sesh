@@ -97,7 +97,7 @@ class RedisSessionStore implements SessionStore {
   }
 
   async deleteSession(key: SessionKey) {
-    await this.store.del(serializeKey(key));
+    return (await this.store.del(serializeKey(key))) > 0;
   }
 }
 
@@ -138,10 +138,17 @@ export class HybridRedisSessionStore implements SessionStore {
   /**
    * Performs an action on both stores, returning the value that was returned from the faster of the two.
    */
-  private withBothStores<T>(
-    consumer: (store: SessionStore) => Promise<T>
-  ): Promise<T> {
+  private raceStores<T>(consumer: (store: SessionStore) => Promise<T>) {
     return Promise.race([
+      consumer(this.cacheStore),
+      consumer(this.primaryStore),
+    ]);
+  }
+
+  private allStores<T>(
+    consumer: (store: SessionStore) => Promise<T>
+  ): Promise<[cacheResult: T, primaryResult: T]> {
+    return Promise.all([
       consumer(this.cacheStore),
       consumer(this.primaryStore),
     ]);
@@ -175,22 +182,22 @@ export class HybridRedisSessionStore implements SessionStore {
     sessionToken?: string
   ): Promise<string> {
     const token = sessionToken ?? generateSessionToken();
-    return this.withBothStores((store) =>
+    return this.raceStores((store) =>
       store.createSession(session, namespace, token)
     );
   }
 
   markSessionActive(key: SessionKey): Promise<void> {
-    return this.withBothStores((store) => store.markSessionActive(key));
+    return this.raceStores((store) => store.markSessionActive(key));
   }
 
   updateSessionMetadata(key: SessionKey, metadata: Json): Promise<void> {
-    return this.withBothStores((store) =>
+    return this.raceStores((store) =>
       store.updateSessionMetadata(key, metadata)
     );
   }
 
-  deleteSession(key: SessionKey): Promise<void> {
-    return this.withBothStores((store) => store.deleteSession(key));
+  async deleteSession(key: SessionKey): Promise<boolean> {
+    return (await this.allStores((store) => store.deleteSession(key)))[1];
   }
 }

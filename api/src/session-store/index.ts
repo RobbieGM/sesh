@@ -47,7 +47,11 @@ export interface SessionStore {
   /** Resets the session's expiration date to last the amount it would have originally lasted, but starting now */
   markSessionActive(key: SessionKey): Promise<void>;
   updateSessionMetadata(key: SessionKey, metadata: Json): Promise<void>;
-  deleteSession(key: SessionKey): Promise<void>;
+  /**
+   * Deletes a session.
+   * @returns true if the session was deleted, false if no session existed at the given key
+   */
+  deleteSession(key: SessionKey): Promise<boolean>;
 }
 
 export class NoSuchSessionError extends Error {}
