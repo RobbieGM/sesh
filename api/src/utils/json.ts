@@ -1,3 +1,6 @@
+import { Json } from "fp-ts/lib/Either";
+import * as t from "io-ts";
+
 /**
  * Represents valid JSON but allows undefined values as well, as those are ignored by JSON.stringify.
  */
@@ -28,3 +31,11 @@ export function excludeUndefinedFromObjectValues<T>(
     NonNullableKeysOf<T>
   >;
 }
+
+/** Dummy JSON type validates everything since only JSON is possible as API input anyway */
+export const DummyJsonType = new t.Type<Json, Json, unknown>(
+  "Json",
+  (input: unknown): input is Json => true,
+  (input) => t.success(input as Json),
+  t.identity
+);

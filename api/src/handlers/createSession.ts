@@ -1,14 +1,7 @@
-import { either, Json } from "fp-ts/lib/Either";
+import { either } from "fp-ts/lib/Either";
 import * as t from "io-ts";
 import { createHandler } from "../handler";
-
-// Dummy JSON type validates everything since only JSON is possible as API input anyway
-const Json = new t.Type<Json, Json, unknown>(
-  "Json",
-  (input: unknown): input is Json => true,
-  (input) => t.success(input as Json),
-  t.identity
-);
+import { DummyJsonType } from "../utils/json";
 
 const DateFromISOString = new t.Type<Date, string, unknown>(
   "DateFromISOString",
@@ -26,7 +19,7 @@ export default createHandler(
   t.intersection([
     t.type({ userId: t.union([t.string, t.number]) }),
     t.partial({
-      metadata: Json,
+      metadata: DummyJsonType,
       expiresAt: DateFromISOString,
       ip: t.string,
       clientId: t.string,

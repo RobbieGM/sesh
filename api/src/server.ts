@@ -13,6 +13,7 @@ import getSession from "./handlers/getSession";
 import * as t from "io-ts";
 import markSessionActive from "./handlers/markSessionActive";
 import deleteSession from "./handlers/deleteSession";
+import updateSessionMetadata from "./handlers/updateSessionMetadata";
 
 dotenv.config({ path: resolve(__dirname, "../.env") });
 
@@ -27,6 +28,7 @@ const handlers = [
   deleteSession,
   getSession,
   markSessionActive,
+  updateSessionMetadata,
 ] as const;
 
 app.use(bodyParser.json());
