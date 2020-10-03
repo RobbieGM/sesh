@@ -58,6 +58,7 @@ export function applyHandler<T extends t.Any>(
         res.setHeader(key, value);
       }
     });
-    res.json(response.data);
+    if (response.data == null) res.send(null);
+    else res.json(response.data);
   });
 }
