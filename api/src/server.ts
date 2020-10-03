@@ -12,6 +12,7 @@ import createSession from "./handlers/createSession";
 import getSession from "./handlers/getSession";
 import * as t from "io-ts";
 import markSessionActive from "./handlers/markSessionActive";
+import deleteSession from "./handlers/deleteSession";
 
 dotenv.config({ path: resolve(__dirname, "../.env") });
 
@@ -21,7 +22,12 @@ const sessionStore = new HybridRedisSessionStore(
   process.env.PRIMARY_STORE_URL,
   process.env.CACHE_STORE_URL ?? process.env.FLY_REDIS_CACHE_URL
 );
-const handlers = [createSession, getSession, markSessionActive] as const;
+const handlers = [
+  createSession,
+  deleteSession,
+  getSession,
+  markSessionActive,
+] as const;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
