@@ -67,10 +67,7 @@ const errorHandlerMiddleware: ErrorRequestHandler = (err, req, res, _next) => {
     res.setHeader(key, value)
   );
   if (!res.headersSent) {
-    return res
-      .type("text/plain")
-      .status(sentError.statusCode)
-      .send(sentError.message);
+    return res.status(sentError.statusCode).json({ error: sentError.message });
   }
 };
 
