@@ -52,6 +52,45 @@ export interface SessionStore {
 
 export class NoSuchSessionError extends Error {}
 
+/** Represents the data actually stored in the Redis store */
+export type MarshalledSession = Omit<
+  { [K in keyof Session]: string },
+  "expiresAt"
+>;
+
+/**
+ * Converts session to JSON
+ */
+export function marshalSession({
+  expiresAt: _,
+  ...session
+}: Session): MarshalledSession {
+  return {
+    ...session,
+    metadata: JSON.stringify(session.metadata),
+    userId: JSON.stringify(session.userId),
+    createdAt: session.createdAt.toISOString(),
+  };
+}
+
+/**
+ * Converts from JSON to session
+ */
+export function unmarshalSession(
+  marshalledSession: MarshalledSession,
+  expiresAt: Date | undefined
+): Session {
+  return {
+    ...marshalledSession,
+    userId: JSON.parse(marshalledSession.userId),
+    metadata: marshalledSession.metadata
+      ? JSON.parse(marshalledSession.metadata)
+      : undefined,
+    expiresAt,
+    createdAt: new Date(marshalledSession.createdAt),
+  };
+}
+
 export function generateSessionToken(): string {
   return randomBytes(16).toString("base64").replace(/[=/+]/g, "");
 }

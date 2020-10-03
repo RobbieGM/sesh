@@ -2,56 +2,15 @@ import { Json } from "fp-ts/lib/Either";
 import Redis from "ioredis";
 import {
   generateSessionToken,
+  MarshalledSession,
+  marshalSession,
   NoSuchSessionError,
   Session,
   SessionKey,
   SessionStore,
+  unmarshalSession,
 } from ".";
-
-/** Represents the data actually stored in the Redis store */
-type MarshalledSession = Omit<{ [K in keyof Session]: string }, "expiresAt">;
-
-type NonNullableKeysOf<T> = {
-  [K in keyof T]-?: undefined extends T[K] ? never : K;
-}[keyof T];
-/**
- * Picks from an object only the keys whose values are not equal to undefined.
- */
-function excludeUndefinedFromObjectValues<T>(object: T) {
-  return Object.entries(object)
-    .filter(([, value]) => value !== undefined)
-    .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {}) as Pick<
-    T,
-    NonNullableKeysOf<T>
-  >;
-}
-
-function marshalSession({
-  expiresAt: _,
-  ...session
-}: Session): MarshalledSession {
-  return {
-    ...session,
-    metadata: JSON.stringify(session.metadata),
-    userId: JSON.stringify(session.userId),
-    createdAt: session.createdAt.toISOString(),
-  };
-}
-
-function unmarshalSession(
-  marshalledSession: MarshalledSession,
-  expiresAt: Date | undefined
-): Session {
-  return {
-    ...marshalledSession,
-    userId: JSON.parse(marshalledSession.userId),
-    metadata: marshalledSession.metadata
-      ? JSON.parse(marshalledSession.metadata)
-      : undefined,
-    expiresAt,
-    createdAt: new Date(marshalledSession.createdAt),
-  };
-}
+import { excludeUndefinedFromObjectValues } from "../utils/json";
 
 /**
  * Converts a SessionKey to a key string for use in a Redis store.
