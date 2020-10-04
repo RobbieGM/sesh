@@ -1,3 +1,4 @@
+import { createHash } from "crypto";
 import { RequestHandler } from "express";
 import {
   Session,
@@ -32,7 +33,8 @@ function getSessionKey(authorizationHeader: string | undefined): SessionKey {
       "Authorization header is unparseable or absent."
     );
   const [, apiKey] = bearerAuthMatch;
-  return { token: apiKey, namespace: API_SESSION_NAMESPACE };
+  const hashedKey = createHash("sha256").update(apiKey).digest("base64");
+  return { token: hashedKey, namespace: API_SESSION_NAMESPACE };
 }
 
 /**
