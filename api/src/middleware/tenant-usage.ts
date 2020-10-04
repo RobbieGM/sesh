@@ -88,14 +88,13 @@ const createTenantUsageMiddleware = (
     },
   });
   if (pricingPlan == "FREE" && getUsageCost(usage) > 0) {
-    req.tenantSession.metadata?.preventUsageUntilMonth;
     const metadata: APISessionMetadata = {
-      ...req.tenantSession.metadata,
+      ...req.tenantSession.metadata!,
       preventUsageUntilMonth: 3,
     };
     await sessionStore.updateSessionMetadata(
       req.tenantSession.key,
-      metadata as Json
+      (metadata as unknown) as Json
     );
   }
 };

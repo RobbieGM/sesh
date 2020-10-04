@@ -20,10 +20,10 @@ export default createHandler(
     }),
     t.partial({ ip: t.string, clientId: t.string }),
   ]),
-  async (data, { sessionStore, tenantId }) => {
+  async (data, { sessionStore, appId }) => {
     const session = await sessionStore.get({
       token: data.token,
-      namespace: tenantId.toString(),
+      namespace: appId.toString(),
     });
     if (session == null) {
       throw new HttpError(ErrorCode.NotFound, "Session does not exist.");

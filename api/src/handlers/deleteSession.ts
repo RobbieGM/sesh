@@ -4,10 +4,10 @@ import { ErrorCode, HttpError } from "../middleware/error";
 export default createHandler(
   ["delete", "/sessions/:token"],
   t.type({ token: t.string }),
-  async ({ token }, { sessionStore, tenantId }) => {
+  async ({ token }, { sessionStore, appId }) => {
     const wasRemoved = await sessionStore.deleteSession({
       token,
-      namespace: tenantId.toString(),
+      namespace: appId.toString(),
     });
     if (wasRemoved) {
       return { statusCode: 204, data: null };

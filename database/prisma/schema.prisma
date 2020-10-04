@@ -18,6 +18,7 @@ model Tenant {
   passwordHash String
   usageRecords UsageRecord[]
   pricingPlan  PricingPlan   @default(FREE)
+  apps         App[]
 }
 
 enum PricingPlan {
@@ -25,11 +26,21 @@ enum PricingPlan {
   METERED
 }
 
+model App {
+  id           Int           @id @default(autoincrement())
+  tenant       Tenant        @relation(fields: [tenantId], references: [id])
+  tenantId     Int
+  usageRecords UsageRecord[]
+}
+
 model UsageRecord {
   tenantId        Int
+  appId           Int
   monthNumber     Int
   apiCalls        Int
   sessionsCreated Int
+  app             App    @relation(fields: [appId], references: [id])
   tenant          Tenant @relation(fields: [tenantId], references: [id])
+
   @@id([tenantId, monthNumber])
 }

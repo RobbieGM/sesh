@@ -24,6 +24,7 @@ export interface Handler<T extends t.Any = t.Any> {
 
 interface Context {
   tenantId: number;
+  appId: number;
   sessionStore: SessionStore;
   prisma: PrismaClient;
 }
@@ -43,6 +44,7 @@ export function applyHandler<T extends t.Any>(
 ): void {
   app[handler.method](handler.path, async (req, res) => {
     const tenantId = req.tenantSession.userId as number;
+    const appId = req.tenantSession.metadata!.appId;
     const data = { ...req.params, ...req.query, ...req.body };
     const response = await fold<
       t.Errors,
@@ -50,7 +52,8 @@ export function applyHandler<T extends t.Any>(
       Response | Promise<Response>
     >(
       (errors) => ({ statusCode: 400, data: (errors as unknown) as Json }),
-      (requestData) => handler.handler(requestData, { ...context, tenantId })
+      (requestData) =>
+        handler.handler(requestData, { ...context, tenantId, appId })
     )(handler.requestDataType.decode(data));
     res.status(response.statusCode ?? 200);
     Object.entries(response.headers ?? {}).forEach(([key, value]) => {

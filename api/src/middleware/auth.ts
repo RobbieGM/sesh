@@ -10,6 +10,7 @@ import { ErrorCode, HttpError } from "./error";
 export interface APISessionMetadata {
   /** Can be set to next month when tenant goes over monthly limit */
   preventUsageUntilMonth?: number;
+  appId: number;
 }
 
 declare global {

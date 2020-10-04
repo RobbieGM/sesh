@@ -7,12 +7,12 @@ import { DummyJsonType } from "../utils/json";
 export default createHandler(
   ["patch", "/sessions/:token/metadata"],
   t.type({ token: t.string, metadata: DummyJsonType }),
-  async ({ token, metadata }, { sessionStore, tenantId }) => {
+  async ({ token, metadata }, { sessionStore, appId }) => {
     try {
       await sessionStore.updateSessionMetadata(
         {
           token,
-          namespace: tenantId.toString(),
+          namespace: appId.toString(),
         },
         metadata
       );

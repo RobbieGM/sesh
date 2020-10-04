@@ -6,11 +6,11 @@ import { HttpError } from "../middleware/error";
 export default createHandler(
   ["patch", "/sessions/:token/activity"],
   t.type({ token: t.string }),
-  async ({ token }, { sessionStore, tenantId }) => {
+  async ({ token }, { sessionStore, appId }) => {
     try {
       await sessionStore.markSessionActive({
         token,
-        namespace: tenantId.toString(),
+        namespace: appId.toString(),
       });
     } catch (e) {
       if (e instanceof NoSuchSessionError) {

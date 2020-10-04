@@ -25,10 +25,10 @@ export default createHandler(
       clientId: t.string,
     }),
   ]),
-  async (data, { sessionStore, tenantId }) => {
+  async (data, { sessionStore, appId }) => {
     const token = await sessionStore.createSession(
       { ...data, createdAt: new Date() },
-      tenantId.toString()
+      appId.toString()
     );
     return { data: token };
   }
