@@ -12,7 +12,7 @@ const headingStyle = css`
   position: relative;
   a {
     right: 100%;
-    ${tw`text-purple-600 absolute opacity-0 outline-none flex items-center inset-y-0 mr-1`}
+    ${tw`text-purple-600 absolute opacity-0 outline-none flex items-center inset-y-0 pr-1`}
   }
   &:target a,
   & a:focus,
