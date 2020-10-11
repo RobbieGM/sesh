@@ -95,7 +95,11 @@ const Docs: React.FC = () => {
       <TopNavigation />
       <main css={tw`max-w-screen-xl mx-auto p-2`}>
         <HeadingOutlineContainer>
-          <div css={baseStyles}>
+          <div
+            css={css`
+              ${baseStyles} ${tw`ml-4`}
+            `}
+          >
             <h1 css={tw`uppercase text-purple-800`}>Documentation</h1>
             <LinkableHeading level="h2" id="getting-started">
               Getting Started

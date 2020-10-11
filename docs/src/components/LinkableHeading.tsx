@@ -23,6 +23,7 @@ const headingStyle = css`
     ${tw`text-teal-600`}
   }
   @media (hover: none) {
+    ${tw`pr-6`}
     a {
       ${tw`opacity-100 right-0`}
     }
