@@ -2,8 +2,8 @@ import { LinkOutline } from "heroicons-react";
 import React, { useMemo } from "react";
 import tw, { css } from "twin.macro";
 
-type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
-interface Props {
+export type HeadingLevel = "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+export interface Props {
   id: string;
   level: HeadingLevel;
 }
