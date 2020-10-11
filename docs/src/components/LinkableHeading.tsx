@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useMemo } from "react";
 import tw, { css } from "twin.macro";
 import { LinkOutline } from "heroicons-react";
 
@@ -42,7 +42,9 @@ const createHeadingComponent = (
   };
 
 const LinkableHeading: React.FC<Props> = ({ id, level, children }) => {
-  const HeadingComponent = createHeadingComponent(level);
+  const HeadingComponent = useMemo(() => createHeadingComponent(level), [
+    level,
+  ]);
   return (
     <HeadingComponent id={id} css={headingStyle}>
       <a href={"#" + id}>
