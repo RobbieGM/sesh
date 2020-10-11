@@ -29,7 +29,7 @@ const DataType: React.FC<Props> = ({ type }) =>
         summary {
           ${tw`-ml-6 inline cursor-default`}
         }
-        dt > code:first-child {
+        dt > code:first-of-type {
           ${tw`font-bold`}
         }
         /* Replace default marker with centered, differently colored one */

@@ -187,7 +187,7 @@ const Home: React.FC = () => (
           <tr
             css={css`
               ${tw`sticky top-0 bottom-0 bg-white`}
-              th:not(:first-child) {
+              th:not(:first-of-type) {
                 width: min-content;
                 ${tw`sm:min-w-16`}
               }
